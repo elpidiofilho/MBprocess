@@ -1,6 +1,6 @@
 Package: MBprocess
 Title: Package to calculate changes in land use maps
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
     person("Elpidio", "Fernandes Filho", , "elpidio@ufv.br", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))

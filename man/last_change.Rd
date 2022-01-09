@@ -15,5 +15,38 @@ last_change(r, cores = 0)
 SpatRaster
 }
 \description{
-number of periods from last change
+number of periods (years) from last change
+}
+\examples{
+library(MBprocess)
+library(terra)
+library(ggplot2)
+lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
+mb <- terra::rast(lu)
+plot(mb[[1]], main = names(mb)[1])
+last_ch = last_change(r = mb, cores = 0)
+plot(last_ch)
+writeRaster(last_ch, filename = 'last_change.tif', overwrite = TRUE,
+            gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+
+df = terra::freq(last_ch) |>
+  data.frame() |>
+  subset(select = -layer) |>
+  transform(freq_100 = count/sum(count) * 100)
+
+ggplot(df, aes(x = as.factor(value), y = count)) +
+  geom_col() + labs(x = 'year of change', y = 'number of pixels',
+                    title = 'year of last change',
+                    subtitle = 'by pixel',
+                    caption = 'data by MapBiomas(2021)') +
+  theme_bw()
+
+ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+  geom_col() +
+  geom_text(aes(label = round(freq_100, 1) ), nudge_y = 2, size = 3) +
+  labs(x = 'year of change', y = '\%',
+       title = 'year of last change',
+       subtitle = 'by pixel',
+       caption = 'data by MapBiomas(2021)') +
+  theme_bw()
 }
