@@ -55,8 +55,8 @@ nchange <- function(x) {
 }
 
 
-#' Last Change
-#' @description number of periods (years) from last change
+#' Land Use Last Change
+#' @description number of periods (years) from last land use change
 #' @param r SpatRaster
 #' @param cores num of processor cores to be used
 #' @importFrom terra app
@@ -70,7 +70,7 @@ nchange <- function(x) {
 #' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 #' mb <- terra::rast(lu)
 #' plot(mb[[1]], main = names(mb)[1])
-#' last_ch = last_change(r = mb, cores = 0)
+#' last_ch = lu_last_change(r = mb, cores = 0)
 #' plot(last_ch)
 #' writeRaster(last_ch, filename = 'last_change.tif', overwrite = TRUE,
 #'             gdal = c("COMPRESS=LZW"), datatype = "INT1U")
@@ -96,7 +96,7 @@ nchange <- function(x) {
 #'        caption = 'data by MapBiomas(2021)') +
 #'   theme_bw()
 
-last_change <- function(r, cores = 0) {
+lu_last_change <- function(r, cores = 0) {
   if (class(r) == 'RasterStack') {
     r = terra::rast(r)
   } else {
@@ -109,15 +109,47 @@ last_change <- function(r, cores = 0) {
 }
 
 
-#' Mode
-#' @description Calculate Mode - the more frequent class in a stack
+#' Land Use Mode
+#' @description Calculate Mode - the most frequent class in a stack or land use rasters
 #' @param r SpatRaster
-#' @param cores num of processor cores to be used
-#' @return SpatRaster
+#' @param cores num of processors cores to be used
+#' @return SpatRaster with the id of modal class
 #' @export
 #' @importFrom terra app
 #' @examples
-mode <- function(r, cores = 0) {
+#' library(MBprocess)
+#' library(terra)
+#' library(ggplot2)
+#' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
+#' mb <- terra::rast(lu)
+#' plot(mb[[1]], main = names(mb)[1])
+#' class_mode = lu_mode(r = mb, cores = 0)
+#' plot(class_mode)
+#' writeRaster(class_mode, filename = 'class_mode.tif', overwrite = TRUE,
+#'             gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+#'
+#' df = terra::freq(class_mode) |>
+#'   data.frame() |>
+#'   subset(select = -layer) |>
+#'   transform(freq_100 = count/sum(count) * 100)
+#'
+#' ggplot(df, aes(x = as.factor(value), y = count)) +
+#'   geom_col() + labs(x = 'LU Class', y = 'number of pixels',
+#'                     title = 'Class Mode',
+#'                     subtitle = 'by pixel',
+#'                     caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+#'
+#' ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+#'   geom_col() +
+#'   geom_text(aes(label = round(freq_100, 1) ), nudge_y = 1, size = 3) +
+#'   labs(x = 'LU Class', y = '%',
+#'        title = 'Class Mode',
+#'        subtitle = 'by pixel',
+#'        caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+
+lu_mode <- function(r, cores = 0) {
   if (class(r) == 'RasterStack') {
     r = terra::rast(r)
   } else {
