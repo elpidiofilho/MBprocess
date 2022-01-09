@@ -182,20 +182,45 @@ lu_class_max_sequence_cont <- function(r, cores = 0) {
 }
 
 #' Number of LU changes
-#' @description Determines the number of times that land use change
+#' @description Determines the number of times that land use change in each pixel
 #' @param r SpatRaster input rasters with one layer by year
-#' @param cores integer number of cores to be used dot multitasking
+#' @param cores integer number of cores to be used to do multitasking
 #' @importFrom terra app
 #' @return SpatRaster
-#' @importFrom terra app
 #' @export
 #' @examples
+#' library(MBprocess)
 #' library(terra)
+#' library(ggplot2)
 #' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 #' mb <- terra::rast(lu)
-#' mchange = lu_n_change(r = mb, cores = 0)
-#' fr = terra::freq(mchange)
-#' print(fr)
+#' plot(mb[[1]], main = names(mb)[1])
+#' num_change = lu_n_change(r = mb, cores = 0)
+#' plot(num_change)
+#' writeRaster(num_change, filename = 'num_change.tif', overwrite = TRUE,
+#' gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+#'
+#' df = terra::freq(num_change) |>
+#' data.frame() |>
+#'   subset(select = -layer) |>
+#'   transform(freq_100 = count/sum(count) * 100)
+#'
+#' ggplot(df, aes(x = as.factor(value), y = count)) +
+#'   geom_col() + labs(x = 'Number of changes', y = 'number of pixels',
+#'                     title = 'Number of Land Use change',
+#'                     subtitle = 'by pixel',
+#'                     caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+#'
+#' ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+#'   geom_col() +
+#'   geom_text(aes(label = round(freq_100, 1) ), nudge_y = 2, size = 3) +
+#'   labs(x = 'number of changes', y = '%',
+#'        title = 'Number of Land Use change',
+#'        subtitle = 'by pixel',
+#'        caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+
 lu_n_change <- function(r, cores = 0) {
   if (class(r) == 'RasterStack') {
     r = terra::rast(r)

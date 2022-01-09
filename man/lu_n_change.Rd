@@ -9,19 +9,44 @@ lu_n_change(r, cores = 0)
 \arguments{
 \item{r}{SpatRaster input rasters with one layer by year}
 
-\item{cores}{integer number of cores to be used dot multitasking}
+\item{cores}{integer number of cores to be used to do multitasking}
 }
 \value{
 SpatRaster
 }
 \description{
-Determines the number of times that land use change
+Determines the number of times that land use change in each pixel
 }
 \examples{
+library(MBprocess)
 library(terra)
+library(ggplot2)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 mb <- terra::rast(lu)
-mchange = lu_n_change(r = mb, cores = 0)
-fr = terra::freq(mchange)
-print(fr)
+plot(mb[[1]], main = names(mb)[1])
+num_change = lu_n_change(r = mb, cores = 0)
+plot(num_change)
+writeRaster(num_change, filename = 'num_change.tif', overwrite = TRUE,
+gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+
+df = terra::freq(num_change) |>
+data.frame() |>
+  subset(select = -layer) |>
+  transform(freq_100 = count/sum(count) * 100)
+
+ggplot(df, aes(x = as.factor(value), y = count)) +
+  geom_col() + labs(x = 'Number of changes', y = 'number of pixels',
+                    title = 'Number of Land Use change',
+                    subtitle = 'by pixel',
+                    caption = 'data by MapBiomas(2021)') +
+  theme_bw()
+
+ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+  geom_col() +
+  geom_text(aes(label = round(freq_100, 1) ), nudge_y = 2, size = 3) +
+  labs(x = 'number of changes', y = '\%',
+       title = 'Number of Land Use change',
+       subtitle = 'by pixel',
+       caption = 'data by MapBiomas(2021)') +
+  theme_bw()
 }
