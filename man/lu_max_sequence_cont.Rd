@@ -23,7 +23,7 @@ library(ggplot2)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 mb <- terra::rast(lu)
 plot(mb[[1]], main = names(mb)[1])
-max_seq = lu_max_sequence_cont(r = mb, cores = 4)
+max_seq = lu_max_sequence_cont(r = mb, cores = 0)
 plot(max_seq)
 writeRaster(max_seq, filename = 'max_seq.tif', overwrite = TRUE,
            gdal = c("COMPRESS=LZW"), datatype = "INT1U")
