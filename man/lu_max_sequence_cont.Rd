@@ -19,9 +19,31 @@ Determines the maximum sequence of years without land use change
 }
 \examples{
 library(terra)
+library(ggplot2)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 mb <- terra::rast(lu)
-max_seq = lu_max_sequence_cont(r = mb, cores = 0)
-fr = terra::freq(max_seq)
-print(fr)
+plot(mb[[1]], main = names(mb)[1])
+max_seq = lu_max_sequence_cont(r = mb, cores = 4)
+plot(max_seq)
+writeRaster(max_seq, filename = 'max_seq.tif', overwrite = TRUE,
+           gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+
+df = terra::freq(max_seq) |>
+ data.frame() |>
+ subset(select = -layer) |>
+ transform(freq_100 = count/sum(count) * 100)
+
+ggplot(df, aes(x = as.factor(value), y = count)) +
+ geom_col() + labs(x = 'years', y = 'area (pixels)',
+                   title = 'Maximum sequence of years without LU change',
+                   caption = 'data by MapBiomas(2021)') +
+ theme_bw()
+
+ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+ geom_col() +
+ geom_text(aes(label = round(freq_100, 1) ), nudge_y = 2, size = 3) +
+ labs(x = 'years', y = 'area (\%)',
+      title = 'Maximum sequence of years without LU change',
+caption = 'data by MapBiomas(2021)') +
+theme_bw()
 }
