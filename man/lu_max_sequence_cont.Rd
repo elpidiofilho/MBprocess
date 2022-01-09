@@ -18,6 +18,7 @@ SpatRaster
 Determines the maximum sequence of years without land use change
 }
 \examples{
+library(MBprocess)
 library(terra)
 library(ggplot2)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")

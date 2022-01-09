@@ -50,8 +50,8 @@ nchange <- function(x) {
     return(NA)
   } else {
     mx = rle(x)
-    max = length(mx)
-    return(max)}
+    nc = length(mx$lengths)
+    return(nc)}
 }
 
 
@@ -108,6 +108,7 @@ mode <- function(r, cores = 0) {
 #' @return SpatRaster
 #' @export
 #' @examples
+#' library(MBprocess)
 #' library(terra)
 #' library(ggplot2)
 #' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
