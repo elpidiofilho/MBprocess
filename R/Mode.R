@@ -53,6 +53,58 @@ nchange <- function(x) {
     nc = length(mx$lengths)
     return(nc)}
 }
+#https://stackoverflow.com/questions/16244006/matching-a-sequence-in-a-larger-vector
+#determines by pixel how many times a class a has changed to class b
+vecIn <- function(a, b){
+  if (any(is.na(x)) == TRUE) {
+    return(NA)
+  } else {
+    ll = which(
+      Reduce('+', lapply(seq_along(y <- lapply(b, '==', a)), function(x){
+        y[[x]][x:(length(a) - length(b) + x)]
+      }
+      )
+      ) == length(b)
+    )
+    return(as.integer(length(ll)))
+  }
+}
+
+
+
+#' lu_change_classAB
+#' @description Determines by pixel how many times a class A has changed
+#'     to a class B
+#' @param r
+#' @param classa lu class original
+#' @param classb lu class changed
+#' @param cores  integer number of CPU cores
+#' @return statRaster
+#' @export
+#'
+#' @examples
+#' library(MBprocess)
+#' library(terra)
+#' library(ggplot2)
+#' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
+#' mb <- terra::rast(lu)
+#' rm1 <- terra::app(mb, vecIn,  b = c(4,6),  cores = 0)
+#' terra::freq(rm1)
+#' terra::plot(rm1)
+
+lu_change_classAB <- function(r, classa, classb, cores) {
+  if (class(r) == 'RasterStack') {
+    r = terra::rast(r)
+  } else {
+    if (class(r) != 'SpatRaster') {
+      stop('r must be a SpatRaster or a RasterStack')
+    }
+  }
+  vc = c(classa, classb)
+  rm1 = terra::app(mb, vecIn,  b = vc,  cores = cores)
+  return(rm1)
+}
+
 
 
 #' Land Use Last Change
