@@ -18,6 +18,7 @@ SpatRaster
 Determines the Class id with  maximum sequence of years without land use change
 }
 \examples{
+library(MBprocess)
 library(terra)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 mb <- terra::rast(lu)

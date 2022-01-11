@@ -225,6 +225,7 @@ lu_max_sequence_cont <- function(r, cores = 0) {
 #' @importFrom terra app
 #' @export
 #' @examples
+#' library(MBprocess)
 #' library(terra)
 #' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 #' mb <- terra::rast(lu)
