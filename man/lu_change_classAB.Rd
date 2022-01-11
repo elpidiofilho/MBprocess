@@ -4,12 +4,12 @@
 \alias{lu_change_classAB}
 \title{lu_change_classAB}
 \usage{
-lu_change_classAB(r, classa, classb, cores)
+lu_change_classAB(r, classab, cores)
 }
 \arguments{
-\item{classa}{lu class original}
+\item{r}{spatRaster or RasterStack with LU layers}
 
-\item{classb}{lu class changed}
+\item{classab}{vector 2 class id ex : c(4,6) or c('forest', 'pasture)}
 
 \item{cores}{integer number of CPU cores}
 }
@@ -26,7 +26,7 @@ library(terra)
 library(ggplot2)
 lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 mb <- terra::rast(lu)
-rm1 <- terra::app(mb, vecIn,  b = c(4,6),  cores = 0)
+rm1 <- MBprocess::lu_change_classAB(r = mb, classab = c(6,4), cores = 0)
 terra::freq(rm1)
 terra::plot(rm1)
 }

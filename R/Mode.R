@@ -75,24 +75,22 @@ vecIn <- function(a, b){
 #' lu_change_classAB
 #' @description Determines by pixel how many times a class A has changed
 #'     to a class B
-#' @param r
-#' @param classa lu class original
-#' @param classb lu class changed
+#' @param r spatRaster or RasterStack with LU layers
+#' @param classab vector 2 class id ex : c(4,6) or c('forest', 'pasture)
 #' @param cores  integer number of CPU cores
 #' @return statRaster
 #' @export
-#'
 #' @examples
 #' library(MBprocess)
 #' library(terra)
 #' library(ggplot2)
 #' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
 #' mb <- terra::rast(lu)
-#' rm1 <- terra::app(mb, vecIn,  b = c(4,6),  cores = 0)
+#' rm1 <- MBprocess::lu_change_classAB(r = mb, classab = c(6,4), cores = 0)
 #' terra::freq(rm1)
 #' terra::plot(rm1)
 
-lu_change_classAB <- function(r, classa, classb, cores) {
+lu_change_classAB <- function(r, classab, cores) {
   if (class(r) == 'RasterStack') {
     r = terra::rast(r)
   } else {
@@ -100,8 +98,7 @@ lu_change_classAB <- function(r, classa, classb, cores) {
       stop('r must be a SpatRaster or a RasterStack')
     }
   }
-  vc = c(classa, classb)
-  rm1 = terra::app(mb, vecIn,  b = vc,  cores = cores)
+  rm1 = terra::app(r, vecIn,  b = classab,  cores = cores)
   return(rm1)
 }
 
