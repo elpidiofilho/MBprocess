@@ -56,6 +56,7 @@ nchange <- function(x) {
 #https://stackoverflow.com/questions/16244006/matching-a-sequence-in-a-larger-vector
 #determines by pixel how many times a class a has changed to class b
 vecIn <- function(a, b){
+  x = NULL
   if (any(is.na(a)) == TRUE) {
     return(NA)
   } else {
