@@ -53,6 +53,18 @@ nchange <- function(x) {
     nc = length(mx$lengths) - 1
     return(nc)}
 }
+
+## number of diferent class by pixel
+diversity <- function(x) {
+  if (any(is.na(x)) == TRUE) {
+    return(NA)
+  } else {
+    mx = rle(x)
+    nc = length(unique(mx$values))
+    return(nc)}
+}
+
+
 #https://stackoverflow.com/questions/16244006/matching-a-sequence-in-a-larger-vector
 #determines by pixel how many times a class a has changed to class b
 vecIn <- function(a, b){
@@ -347,4 +359,59 @@ lu_n_change <- function(r, cores = 0) {
   rnchange = terra::app(r, nchange, cores = cores)
   names(rnchange) = 'class number of changes'
   return(rnchange)
+}
+
+
+
+#' Diversity
+#' @description calculates the different number os class by cell/pixel
+#' @param r SpatRaster input rasters with one layer by year
+#' @param cores  integer number of cores to be used to do multitasking
+#' @return SpatRaster
+#' @importFrom terra app
+#' @export
+#' @examples
+#' #' library(MBprocess)
+#' library(terra)
+#' library(ggplot2)
+#' lu <- system.file("extdata", 'lu_test.tif', package = "MBprocess")
+#' mb <- terra::rast(lu)
+#' plot(mb[[1]], main = names(mb)[1])
+#' diversity = MBprocess::lu_diversity(r = mb, cores = 0)
+#' plot(diversity)
+#' writeRaster(diversity, filename = 'diversity.tif', overwrite = TRUE,
+#' gdal = c("COMPRESS=LZW"), datatype = "INT1U")
+#'
+#' df = terra::freq(diversity) |>
+#' data.frame() |>
+#'   subset(select = -layer) |>
+#'   transform(freq_100 = count/sum(count) * 100)
+#'
+#' ggplot(df, aes(x = as.factor(value), y = count)) +
+#'   geom_col() + labs(x = 'diversity', y = 'number of pixels',
+#'                     title = 'Diversity',
+#'                     subtitle = 'by pixel',
+#'                     caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+#'
+#' ggplot(df, aes(x = as.factor(value), y = freq_100)) +
+#'   geom_col() +
+#'   geom_text(aes(label = round(freq_100, 1) ), nudge_y = 2, size = 3) +
+#'   labs(x = 'number of changes', y = '%',
+#'        title = 'Number of different Land Use',
+#'        subtitle = 'by pixel',
+#'        caption = 'data by MapBiomas(2021)') +
+#'   theme_bw()
+
+lu_diversity <- function(r, cores = 0) {
+  if (class(r) == 'RasterStack') {
+    r = terra::rast(r)
+  } else {
+    if (class(r) != 'SpatRaster') {
+      stop('r must be a SpatRaster or a RasterStack')
+    }
+  }
+  rdiversity = terra::app(r, diversity, cores = cores)
+  names(rdiversity) = 'diversity'
+  return(rdiversity)
 }

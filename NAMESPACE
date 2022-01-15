@@ -2,6 +2,7 @@
 
 export(lu_change_classAB)
 export(lu_class_max_sequence_cont)
+export(lu_diversity)
 export(lu_last_change)
 export(lu_max_sequence_cont)
 export(lu_mode)
