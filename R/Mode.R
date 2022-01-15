@@ -50,7 +50,7 @@ nchange <- function(x) {
     return(NA)
   } else {
     mx = rle(x)
-    nc = length(mx$lengths)
+    nc = length(mx$lengths) - 1
     return(nc)}
 }
 #https://stackoverflow.com/questions/16244006/matching-a-sequence-in-a-larger-vector
