@@ -18,7 +18,7 @@ statRaster
 }
 \description{
 Determines by pixel how many times a class A has changed
-to a class B
+to a class B. Can be used with more than two class
 }
 \examples{
 library(MBprocess)

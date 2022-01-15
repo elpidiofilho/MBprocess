@@ -75,7 +75,7 @@ vecIn <- function(a, b){
 
 #' lu_change_classAB
 #' @description Determines by pixel how many times a class A has changed
-#'     to a class B
+#'     to a class B. Can be used with more than two class
 #' @param r spatRaster or RasterStack with LU layers
 #' @param classab vector 2 class id ex : c(4,6) or c('forest', 'pasture)
 #' @param cores  integer number of CPU cores
