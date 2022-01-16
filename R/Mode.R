@@ -364,7 +364,7 @@ lu_n_change <- function(r, cores = 0) {
 
 
 #' Diversity
-#' @description calculates the different number os class by cell/pixel
+#' @description calculates the different number of class by cell/pixel
 #' @param r SpatRaster input rasters with one layer by year
 #' @param cores  integer number of cores to be used to do multitasking
 #' @return SpatRaster
